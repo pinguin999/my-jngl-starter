@@ -1,0 +1,68 @@
+image: registry.fedoraproject.org/fedora-minimal:36
+
+linux:
+  stage: build
+  script:
+    - microdnf install -y git clang fontconfig-devel freetype-devel libvorbis-devel libepoxy-devel libwebp-devel boost-python3-devel python3-devel cmake ninja-build SDL2-devel openal-soft-devel clang-tools-extra python3-PyYAML libcxx-devel libasan >/dev/null
+    - mkdir build
+    - cd build
+    - cmake -GNinja ..
+    - TERM=xterm script -qfec "ninja jnglexample" /dev/null
+    - cd ..
+    - rm -rf build
+    - mkdir build
+    - cd build
+    - CC=clang CXX=clang++ CXXFLAGS=-stdlib=libc++ cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -GNinja ..
+    - TERM=xterm script -qfec "ninja jnglexample" /dev/null
+
+windows:
+  stage: build
+  script:
+    - microdnf install -y cmake ninja-build mingw32-pkg-config mingw32-libvorbis mingw32-SDL2 mingw32-fontconfig mingw32-libwebp mingw32-boost mingw32-dlfcn mingw32-libepoxy mingw32-openal-soft mingw32-nsis git >/dev/null
+    - mingw32-cmake -Bbuild-windows -GNinja -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=0
+    - ninja -Cbuild-windows jnglexample.exe
+    - makensis windows/installer.nsi
+  artifacts:
+    paths:
+      - Project Schranke Setup.exe
+
+
+web:
+  stage: build
+  image: emscripten/emsdk
+  script:
+    - sudo apt remove --purge --auto-remove cmake -y
+    - sudo apt update -y
+    - sudo apt upgrade -y
+    - sudo apt install libvorbis-dev libogg-dev -y
+    - version=3.19
+    - build=1
+    - wget --quiet https://cmake.org/files/v$version/cmake-$version.$build-Linux-x86_64.sh
+    - sudo mkdir /opt/cmake
+    - sudo sh cmake-$version.$build-Linux-x86_64.sh --prefix=/opt/cmake --skip-license
+    - sudo ln -s /opt/cmake/bin/cmake /usr/local/bin/cmake
+    - mkdir build
+    - cp -r data build/data
+    - cd build
+    - emcmake cmake -DJNGL_VIDEO=0 -DCMAKE_BUILD_TYPE=Release .. && make jnglexample
+
+    - rm -r CMakeFiles CMakeCache.txt Makefile _deps cmake_install.cmake include subprojects
+  artifacts:
+    paths:
+      - build/
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+
+pages:
+  stage: deploy
+  dependencies:
+    - web
+  script:
+  - cp -r build public
+  artifacts:
+    paths:
+    - public
+  # only:
+  # - master

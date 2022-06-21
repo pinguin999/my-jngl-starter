@@ -1,0 +1,2 @@
+#cmakedefine GFX_FILES "@GFX_FILES@"
+#cmakedefine SFX_FILES "@SFX_FILES@"

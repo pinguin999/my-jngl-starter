@@ -1,0 +1,66 @@
+{
+	"version": "2.0.0",
+	"windows": {
+		"command": "C:\\msys64\\usr\\bin\\bash.exe",
+		"args": ["-lc", "([ -f build/Makefile ] || (mkdir build && cd build && cmake -G'MSYS Makefiles' -DCMAKE_BUILD_TYPE=Debug .. && cd ..)) && cd build && make -j8"]
+	},
+	"linux": {
+		"args": [
+			"-lc",
+			"cd \"\"${workspaceRoot}\"\" && ([ -d build ] || (mkdir build && cd build && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Debug ..)) && (if command -v ja >/dev/null 2>&1; then ja; else cmake --build build; fi) && $@"
+		],
+		"command": "/bin/bash"
+	},
+	"osx": {
+		"args": [
+			"-lc",
+			"cd \"\"${workspaceRoot}\"\" && ([ -d build ] || (mkdir build && cd build && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Debug ..)) && (if command -v ja >/dev/null 2>&1; then ja; else cmake --build build; fi) && $@"
+		],
+		"command": "/bin/bash"
+	},
+	"options": {
+		"env": {
+			"LANG": "C.UTF-8",
+			"PYTHONUNBUFFERD": "1",
+			"MSYSTEM": "MINGW64",
+			"CHERE_INVOKING": "1"
+		}
+	},
+	"tasks": [
+		{
+			"label": "build",
+			"problemMatcher": {
+				"owner": "cpp",
+				"fileLocation": [
+					"autoDetect",
+					"${workspaceRoot}/build"
+				],
+				"pattern": {
+					"regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error|fatal error):\\s+(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"severity": 4,
+					"message": 5
+				}
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "rebuild_cache",
+			"problemMatcher": [],
+			"command": "/bin/bash",
+			"args": ["-c", "git submodule update && ninja rebuild_cache -Cbuild"]
+		}
+	],
+	"presentation": {
+		"echo": false,
+		"focus": false,
+		"panel": "shared",
+		"showReuseMessage": false,
+		"clear": true
+	}
+}

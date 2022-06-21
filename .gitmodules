@@ -1,0 +1,3 @@
+[submodule "subprojects/jngl"]
+	path = subprojects/jngl
+	url = https://github.com/jhasse/jngl.git

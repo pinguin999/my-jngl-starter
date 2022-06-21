@@ -125,6 +125,11 @@ configure_file(src/engine/datafiles.hpp.in include/datafiles.hpp @ONLY)
 
 if(WIN32)
 	target_compile_definitions(jnglexample PRIVATE _USE_MATH_DEFINES)
+	if(MSVC)
+	add_custom_command(TARGET jnglexample COMMAND ${CMAKE_COMMAND} -E copy
+		${PROJECT_SOURCE_DIR}/subprojects/jngl/lib/msvc/x86_64/epoxy-0.dll
+		"$<TARGET_FILE_DIR:jnglexample>")
+endif()
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")

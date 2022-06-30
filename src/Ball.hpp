@@ -11,6 +11,5 @@ public:
 	void draw() const override;
 
 private:
-	jngl::Sprite sprite{"Icon"};
-    jngl::Vec2 position;
+    jngl::Vec2 velocity = jngl::Vec2(1,0);
 };

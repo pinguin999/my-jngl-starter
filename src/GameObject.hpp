@@ -19,6 +19,6 @@ public:
 
 	virtual double getZIndex() const;
 
-private:
+protected:
 	jngl::Vec2 position;
 };

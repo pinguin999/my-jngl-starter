@@ -1,16 +1,25 @@
-#include "ball.hpp"
+#include "Ball.hpp"
 
-Ball::Ball(const jngl::Vec2 position) :position(position) {
-
+Ball::Ball(const jngl::Vec2 position){
+	this->position = position;
 }
 
 bool Ball::step() {
+	// Ball logic goes here
+	position = position + velocity;
+
+	int width = jngl::getScreenWidth();
+	if (position.x > width / 2 || position.x < -width / 2)
+	{
+		velocity.x = velocity.x * -1.0;
+	}
+
 	return true;
 }
 
 void Ball::draw() const {
 	jngl::pushMatrix();
-	jngl::translate(position);
-	sprite.draw();
+	jngl::setColor(jngl::Color(255, 255, 255));
+	jngl::drawCircle(position, 20);
 	jngl::popMatrix();
 }

@@ -12,11 +12,14 @@
 Game::Game() {
 	jngl::setBackgroundColor(jngl::Color(0, 0, 0));
 
-	gameObjects.emplace_back(std::make_shared<Ball>(jngl::Vec2(0, 0)));
-
 	int width = jngl::getScreenWidth() / 2;
-	gameObjects.emplace_back(std::make_shared<Paddle>(jngl::Vec2(-width + 100, 0), 0, std::make_unique<KetchupControl>()));
-	gameObjects.emplace_back(std::make_shared<Paddle>(jngl::Vec2(width - 100, 0), 1, std::make_unique<MajoControl>()));
+
+	auto paddlel = std::make_shared<Paddle>(jngl::Vec2(-width + 100, 0), 0, std::make_unique<KetchupControl>());
+	gameObjects.emplace_back(paddlel);
+	auto paddler = std::make_shared<Paddle>(jngl::Vec2(width - 100, 0), 1, std::make_unique<MajoControl>());
+	gameObjects.emplace_back(paddler);
+
+	gameObjects.emplace_back(std::make_shared<Ball>(jngl::Vec2(0, 0), paddlel, paddler));
 }
 
 void Game::step() {

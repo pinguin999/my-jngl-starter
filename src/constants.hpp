@@ -4,7 +4,9 @@
 
 const std::string programDisplayName = "JNGL Example Game";
 
-constexpr int BOUNDS_W = 960;
-constexpr int BOUNDS_H = 540;
+constexpr int BALL_RADIUS = 20;
+
+constexpr int PADDLE_W = 50;
+constexpr int PADDLE_H = 200;
 
 void printCentered(const std::string& text, double x, double y);

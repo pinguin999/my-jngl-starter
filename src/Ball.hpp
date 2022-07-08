@@ -11,5 +11,5 @@ public:
 	void draw() const override;
 
 private:
-    jngl::Vec2 velocity = jngl::Vec2(1,0);
+    jngl::Vec2 velocity = jngl::Vec2(4,5);
 };

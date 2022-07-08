@@ -14,6 +14,12 @@ bool Ball::step() {
 		velocity.x = velocity.x * -1.0;
 	}
 
+	int height = jngl::getScreenHeight();
+	if (position.y > height / 2 || position.y < -height / 2)
+	{
+		velocity.y = velocity.y * -1.0;
+	}
+
 	return true;
 }
 

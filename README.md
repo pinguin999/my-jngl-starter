@@ -4,7 +4,7 @@ A tutorial that teaches how to implement the game Pong in JNGL.
 
 ## Let's getting Started
 
-In this tutorial we base on the [JNGL-Starter Project](https://github.com/jhasse/jngl-starter). So first check it out and set up your local mashine for building projects with JNGL. In the case you are working on a Windows PC we have a nice short task list in the Readme in the [JNGL-Starter Project](https://github.com/jhasse/jngl-starter). After setting up your first JNGL project you will have a window just showing a black background. In general we need tree objects for the Pong game. A ball and two paddles.
+In this tutorial we base on the [JNGL-Starter Project](https://github.com/jhasse/jngl-starter). So first check it out and set up your local machine for building projects with JNGL. In the case you are working on a Windows PC we have a nice short task list in the Readme in the [JNGL-Starter Project](https://github.com/jhasse/jngl-starter). After setting up your first JNGL project you will have a window just showing a black background. In general we need three objects for the Pong game. A ball and two paddles.
 <!-- Later we will add a score board. -->
 
 To get anything showing on the screen we can start with the ball. Just a white circle in the middle of the screen.
@@ -274,12 +274,28 @@ jngl::Vec2 MajoControl::getMovement() const {
 }
 ```
 
-Then we can add the Controls to the Paddles. In `Paddle.hpp` we add a new parameter to the constructor.
+Then we can add the Controls to the Paddles. In `Paddle.hpp` we add a new member and a new parameter to the constructor.
 
 Paddle.hpp
 
 ```cpp
-Paddle(jngl::Vec2 position, int playerNr, std::unique_ptr<Control> control);
+#pragma once
+
+#include "GameObject.hpp"
+#include "Control.hpp"
+
+#include <jngl.hpp>
+
+class Paddle : public GameObject {
+public:
+    Paddle(jngl::Vec2 position, int playerNr, std::unique_ptr<Control> control);
+    bool step() override;
+    void draw() const override;
+
+private:
+    const int playerNr;
+    std::unique_ptr<Control> control;
+};
 ```
 
 Paddle.cpp

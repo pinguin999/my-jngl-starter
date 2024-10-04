@@ -44,8 +44,6 @@ bool Ball::step() {
 }
 
 void Ball::draw() const {
-	jngl::pushMatrix();
-	jngl::setColor(jngl::Color(255, 255, 255));
-	jngl::drawCircle(position, BALL_RADIUS);
-	jngl::popMatrix();
+	jngl::drawCircle(jngl::modelview().translate(position).scale(BALL_RADIUS),
+	                 jngl::Rgba(1, 1, 1, 1));
 }

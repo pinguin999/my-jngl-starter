@@ -16,10 +16,9 @@ bool Paddle::step() {
 }
 
 void Paddle::draw() const {
-	jngl::pushMatrix();
-	jngl::setColor(jngl::Color(255, 255, 255));
+	jngl::Mat3 modelview = jngl::modelview().translate(position);
 	// Normal drawRect position is top left corner
 	// We want to draw from the rect middle
-	jngl::drawRect(position - jngl::Vec2(PADDLE_W / 2, PADDLE_H / 2), jngl::Vec2(PADDLE_W, PADDLE_H));
-	jngl::popMatrix();
+	modelview.translate(-jngl::Vec2(PADDLE_W / 2, PADDLE_H / 2));
+	jngl::drawRect(modelview, jngl::Vec2(PADDLE_W, PADDLE_H), jngl::Rgba(1, 1, 1, 1));
 }

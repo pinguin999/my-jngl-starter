@@ -48,10 +48,8 @@ bool Ball::step() {
 }
 
 void Ball::draw() const {
-    jngl::pushMatrix();
-    jngl::setColor(jngl::Color(255, 255, 255));
-    jngl::drawCircle(position, 20);
-    jngl::popMatrix();
+	jngl::drawCircle(jngl::modelview().translate(position).scale(BALL_RADIUS),
+	                 jngl::Rgba(1, 1, 1, 1));
 }
 ```
 
@@ -59,17 +57,17 @@ To get the ball into the game, we have to create a new ball instance in Game.cpp
 
 ```cpp
 Game::Game() {
-    jngl::setBackgroundColor(jngl::Color(0, 0, 0));
+    jngl::setBackgroundColor(jngl::Rgb(0, 0, 0));
 
     gameObjects.emplace_back(std::make_shared<Ball>(jngl::Vec2(0, 0)));
 }
 ```
 
-Now our game will looks like that. With the ESC-Key we can exit the game.
+Now our game will look like that. With the <kbd>esc</kbd> key we can exit the game.
 
 ![The Ball is in the game](the_ball.png)
 
-Let’s now move the ball. Therefore we need to change the balls position in the step function. As a first test we can update the balls position in the step function. Let’s add a new line in the step function that updates the position every frame.
+Let's now move the ball. Therefore we need to change the balls position in the step function. As a first test we can update the balls position in the step function. Let's add a new line in the step function that updates the position every frame.
 
 ```cpp
 bool Ball::step() {
@@ -90,7 +88,7 @@ private:
 };
 ```
 
-Ball.cpp’s `step()`
+Ball.cpp's `step()`
 
 ```cpp
 bool Ball::step() {
@@ -108,7 +106,7 @@ bool Ball::step() {
 }
 ```
 
-Now you know the basics of creating objects in JNGl. Maybe it’s a good point to try creating the Paddle class yourself and after that look into the next steps.
+Now you know the basics of creating objects in JNGl. Maybe it's a good point to try creating the Paddle class yourself and after that look into the next steps.
 
 Paddle.hpp
 
@@ -132,8 +130,8 @@ Paddle.cpp
 ```cpp
 #include "Paddle.hpp"
 
-#define PADDLE_W 50
-#define PADDLE_H 200
+constexpr int PADDLE_W = 50;
+constexpr int PADDLE_H = 200;
 
 Paddle::Paddle(const jngl::Vec2 position) {
     this->position = position;
@@ -147,10 +145,11 @@ bool Paddle::step() {
 }
 
 void Paddle::draw() const {
-    jngl::pushMatrix();
-    jngl::setColor(jngl::Color(255, 255, 255));
-    jngl::drawRect(position, jngl::Vec2(PADDLE_W, PADDLE_H));
-    jngl::popMatrix();
+	jngl::Mat3 modelview = jngl::modelview().translate(position);
+	// Normal drawRect position is top left corner
+	// We want to draw from the rect middle
+	modelview.translate(-jngl::Vec2(PADDLE_W / 2, PADDLE_H / 2));
+	jngl::drawRect(modelview, jngl::Vec2(PADDLE_W, PADDLE_H), jngl::Rgba(1, 1, 1, 1));
 }
 ```
 
@@ -158,7 +157,7 @@ And in `game.cpp` we need to add the Paddle.
 
 ```cpp
 Game::Game() {
-    jngl::setBackgroundColor(jngl::Color(0, 0, 0));
+    jngl::setBackgroundColor(jngl::Rgb(0, 0, 0));
 
     gameObjects.emplace_back(std::make_shared<Ball>(jngl::Vec2(0, 0)));
     gameObjects.emplace_back(std::make_shared<Paddle>(jngl::Vec2(0, 0)));
@@ -199,12 +198,11 @@ And Paddle.cpp draw so we draw the paddle from the center and not from the top l
 
 ```cpp
 void Paddle::draw() const {
-    jngl::pushMatrix();
-    jngl::setColor(jngl::Color(255, 255, 255));
-    // Normal drawRect position is top left corner
-    // We want to draw from the rect middle
-    jngl::drawRect(position - jngl::Vec2(PADDLE_W / 2, PADDLE_H / 2), jngl::Vec2(PADDLE_W, PADDLE_H));
-    jngl::popMatrix();
+	jngl::Mat3 modelview = jngl::modelview().translate(position);
+	// Normal drawRect position is top left corner
+	// We want to draw from the rect middle
+	modelview.translate(-jngl::Vec2(PADDLE_W / 2, PADDLE_H / 2));
+	jngl::drawRect(modelview, jngl::Vec2(PADDLE_W, PADDLE_H), jngl::Rgba(1, 1, 1, 1));
 }
 ```
 
@@ -212,7 +210,7 @@ In `Game.cpp` we can now add the two Paddles nicely posisioned left and right
 
 ```cpp
 Game::Game() {
-    jngl::setBackgroundColor(jngl::Color(0, 0, 0));
+    jngl::setBackgroundColor(jngl::Rgb(0, 0, 0));
 
     gameObjects.emplace_back(std::make_shared<Ball>(jngl::Vec2(0, 0)));
     int width = jngl::getScreenWidth() / 2;
@@ -317,16 +315,15 @@ bool Paddle::step() {
 }
 
 void Paddle::draw() const {
-    jngl::pushMatrix();
-    jngl::setColor(jngl::Color(255, 255, 255));
-    // Normal drawRect position is top left corner
-    // We want to draw from the rect middle
-    jngl::drawRect(position - jngl::Vec2(PADDLE_W / 2, PADDLE_H / 2), jngl::Vec2(PADDLE_W, PADDLE_H));
-    jngl::popMatrix();
+	jngl::Mat3 modelview = jngl::modelview().translate(position);
+	// Normal drawRect position is top left corner
+	// We want to draw from the rect middle
+	modelview.translate(-jngl::Vec2(PADDLE_W / 2, PADDLE_H / 2));
+	jngl::drawRect(modelview, jngl::Vec2(PADDLE_W, PADDLE_H), jngl::Rgba(1, 1, 1, 1));
 }
 ```
 
-Now our Paddles can move up and down. But we can also move them out of the screen. That’s not what we want. So let’s limit the Position. It’s very easy and we already have code for that in the controls, so that the controls input can not be larger than 1. Now we want that Position.Y is not larger than screen height/2 and not smaller negativ screen height/2.
+Now our Paddles can move up and down. But we can also move them out of the screen. That's not what we want. So let's limit the Position. It's very easy and we already have code for that in the controls, so that the controls input can not be larger than 1. Now we want that position.y is not larger than screen height/2 and not smaller negativ screen height/2.
 
 In Paddle.cpp
 
@@ -354,7 +351,7 @@ Ball.hpp
 
 But now we will never see our ball again after the ball leaves the screen at the bottom.
 In Ball.cpp we have to also update the collision test for the top and bottom.
-I’t very easy and you can try it your self if you want. We already have the test for X ;)
+I't very easy and you can try it your self if you want. We already have the test for X ;)
 
 Ball.cpp
 
@@ -379,7 +376,7 @@ bool Ball::step() {
 }
 ```
 
-If you look close you can see, that the ball does not bounce at the border. Instead the ball flies out of the screen and bounces at its center. We can fix that by adding the radius of the ball to the collision check. But we don’t want to have magic numbers all over our code, so we can move the 20 to a constant values in the constants.hpp file. (In this step we also move the paddle_w and h into this file.)
+If you look close you can see, that the ball does not bounce at the border. Instead the ball flies out of the screen and bounces at its center. We can fix that by adding the radius of the ball to the collision check. But we don't want to have magic numbers all over our code, so we can move the 20 to a constant values in the constants.hpp file. (In this step we also move the paddle_w and h into this file.)
 
 constants.hpp
 
@@ -398,7 +395,7 @@ constexpr int PADDLE_H = 200;
 void printCentered(const std::string& text, double x, double y);
 ```
 
-Paddle.cpp’s header should now look like this.
+Paddle.cpp's header should now look like this.
 
 ```cpp
 #include "Paddle.hpp"
@@ -413,7 +410,7 @@ Game.cpp
 
 ```cpp
 Game::Game() {
-    jngl::setBackgroundColor(jngl::Color(0, 0, 0));
+    jngl::setBackgroundColor(jngl::Rgb(0, 0, 0));
 
     int width = jngl::getScreenWidth() / 2;
 
@@ -503,9 +500,7 @@ bool Ball::step() {
 }
 
 void Ball::draw() const {
-    jngl::pushMatrix();
-    jngl::setColor(jngl::Color(255, 255, 255));
-    jngl::drawCircle(position, BALL_RADIUS);
-    jngl::popMatrix();
+	jngl::drawCircle(jngl::modelview().translate(position).scale(BALL_RADIUS),
+	                 jngl::Rgba(1, 1, 1, 1));
 }
 ```

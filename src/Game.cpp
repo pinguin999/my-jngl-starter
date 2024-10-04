@@ -10,7 +10,7 @@
 #include <cmath>
 
 Game::Game() {
-	jngl::setBackgroundColor(jngl::Color(0, 0, 0));
+	jngl::setBackgroundColor(jngl::Rgb(0, 0, 0));
 
 	int width = jngl::getScreenWidth() / 2;
 

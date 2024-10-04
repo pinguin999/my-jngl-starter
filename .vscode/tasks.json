@@ -7,14 +7,14 @@
 	"linux": {
 		"args": [
 			"-lc",
-			"cd \"\"${workspaceRoot}\"\" && ([ -d build ] || (mkdir build && cd build && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Debug ..)) && (if command -v ja >/dev/null 2>&1; then ja; else cmake --build build; fi) && $@"
+			"cd \"\"${workspaceRoot}\"\" && ([ -d build ] || (mkdir build && cd build && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Debug ..)) && cmake --build build --parallel $(nproc) && $@"
 		],
 		"command": "/bin/bash"
 	},
 	"osx": {
 		"args": [
 			"-lc",
-			"cd \"\"${workspaceRoot}\"\" && ([ -d build ] || (mkdir build && cd build && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Debug ..)) && (if command -v ja >/dev/null 2>&1; then ja; else cmake --build build; fi) && $@"
+			"cd \"\"${workspaceRoot}\"\" && ([ -d build ] || (mkdir build && cd build && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Debug ..)) && cmake --build build --parallel $(nproc) && $@"
 		],
 		"command": "/bin/bash"
 	},
